@@ -1,28 +1,20 @@
 #include "ecs.hpp"
 
-
-#include <cstdint>
 #include <memory>
-#include <vector>
 #include <algorithm>
-#include <iostream>
-#include <unordered_map>
 #include <cassert>
-
-
-
 
 
 const char* IComponent::type() {
 	return typeid(*this).name();
 }
 
+#pragma region ComponentManager
 
 bool ComponentManager::hasEntity(Entity entity) {
 	return std::find(entities.begin(), entities.end(), entity) != entities.end();
 }
 
-	
 Entity ComponentManager::createEntity() {
 	assert((!hasEntity(nextId)) && "ComponentManager::createEntity: Can't create Entity. This id is already in use.");
 	Entity entity = nextId;
@@ -39,7 +31,6 @@ void ComponentManager::removeEntity(Entity entity) {
 	}
 }
 
-
 bool ComponentManager::hasComponent(Entity entity, const char* type) {
 	if (!hasEntity(entity)) {
 		return false;
@@ -53,23 +44,40 @@ bool ComponentManager::hasComponent(Entity entity, const char* type) {
 	return false;
 }
 
+#pragma endregion
 
+#pragma region Scene
 
-
-
-void MovementSystem::init() {
-	std::cout << "MovementSystem::init [" << types[0] << ", " << types[1] << "]" << std::endl;
+Scene::Scene() {
+	componentManager = std::make_shared<ComponentManager>();
 }
 
-void MovementSystem::update(float dt) {
-	for (auto& entity : componentManager->entities) {
-		if (hasComponents(entity)) {
-			std::shared_ptr<TransformComponent> transform = componentManager->getComponent<TransformComponent>(entity);
-			std::shared_ptr<VelocityComponent> velocity = componentManager->getComponent<VelocityComponent>(entity);
-			
-			transform->position.x += velocity->position.x * dt;
-			transform->position.y += velocity->position.y * dt;
-			transform->position.z += velocity->position.z * dt;
-		}
+Entity Scene::createEntity() {
+	return componentManager->createEntity();
+}
+
+void Scene::removeEntity(Entity entity) {
+	componentManager->removeEntity(entity);
+}
+
+bool Scene::hasEntity(Entity entity) {
+	return componentManager->hasEntity(entity);
+}
+
+bool Scene::hasComponent(Entity entity, const char* type) {
+	return componentManager->hasComponent(entity, type);
+}
+
+void Scene::initSystems() {
+	for (const auto& system : systems) {
+		system->init();
 	}
 }
+
+void Scene::updateSystems(float dt) {
+	for (const auto& system : systems) {
+		system->update(dt);
+	}
+}
+
+#pragma endregion
