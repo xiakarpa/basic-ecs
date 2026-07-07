@@ -35,18 +35,18 @@ int main() {
 	
 
 	Vec3 pos = scene.getComponent<TransformComponent>(entity)->position;
-	std::cout << pos.x << " " << pos.y << " " << pos.z << std::endl; 
+	std::cout << "before update:\t" << pos.x << " " << pos.y << " " << pos.z << std::endl; 
 	
 	scene.updateSystems(1.f);
 	scene.updateSystems(1.f);
 	
 	pos = scene.getComponent<TransformComponent>(entity)->position;
-	std::cout << pos.x << " " << pos.y << " " << pos.z << std::endl; 
+	std::cout << "after update:\t" << pos.x << " " << pos.y << " " << pos.z << std::endl; 
 	
 	lua_binding::entityUpdate(entity);
 	
 	pos = scene.getComponent<TransformComponent>(entity)->position;
-	std::cout << pos.x << " " << pos.y << " " << pos.z << std::endl; 
+	std::cout << "after script:\t" << pos.x << " " << pos.y << " " << pos.z << std::endl; 
 	
 	return 0;
 }

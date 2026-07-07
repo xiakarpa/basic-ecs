@@ -4,9 +4,9 @@ print("===\tlua script started\t===")
 
 print(pos.x, pos.y, pos.z)
 
-pos.y = pos.y + 10
+pos.y = pos.y + 9
 
-set_position(pos.x + 1, pos.y, pos.z)
+set_position(pos.x + 2, pos.y, pos.z)
 
 pos = get_position()
 
