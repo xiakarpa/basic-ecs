@@ -13,9 +13,11 @@ using Entity = std::uint32_t;
 
 class IComponent {
 public:
+	// виртуальная функция для всех компонентов, чтобы получать их уникальное "имя" - то есть их тип, для их поиска и отслеживания
 	virtual const char* type();
 };
 
+// менеджер компонент-сущностей, который нужен системам, потому что мы не можем дать доступ к сцене системам из-за обоюдной зависимости
 class ComponentManager {
 private:
 	std::unordered_map<Entity, std::vector<std::shared_ptr<IComponent>>> components;
@@ -28,6 +30,7 @@ public:
 	void removeEntity(Entity entity);
 	bool hasEntity(Entity entity);
 	
+	// шаблоны использующие имя типа для поиска компонентов
 	template <typename T> void connectComponent(Entity entity, T component);
 	template <typename T> bool hasComponent(Entity entity);
 	bool hasComponent(Entity entity, const char* type);
@@ -38,6 +41,7 @@ public:
 
 #pragma region System
 
+// необходимо для каста, так как мы не можем делать каст System<Comp1...> к System<>
 class ISystem {
 protected: 
 	virtual bool hasComponents(Entity entity) = 0;
