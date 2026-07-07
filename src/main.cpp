@@ -1,11 +1,15 @@
 #include "lib/ecs.hpp"
 #include "systems/movement.hpp"
+#include "lua_binding.hpp"
 
 #include <iostream>
+
+#include <sol/sol.hpp>
 
 
 int main() {
 	Scene scene;
+	lua_binding::init(scene);
 	
 	scene.connectSystem<MovementSystem>();
 	
@@ -29,11 +33,17 @@ int main() {
 	
 	scene.initSystems();
 	
+
 	Vec3 pos = scene.getComponent<TransformComponent>(entity)->position;
 	std::cout << pos.x << " " << pos.y << " " << pos.z << std::endl; 
 	
 	scene.updateSystems(1.f);
 	scene.updateSystems(1.f);
+	
+	pos = scene.getComponent<TransformComponent>(entity)->position;
+	std::cout << pos.x << " " << pos.y << " " << pos.z << std::endl; 
+	
+	lua_binding::entityUpdate(entity);
 	
 	pos = scene.getComponent<TransformComponent>(entity)->position;
 	std::cout << pos.x << " " << pos.y << " " << pos.z << std::endl; 
